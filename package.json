@@ -1,0 +1,23 @@
+{
+  "name": "marleyspoon-api",
+  "version": "1.0.0",
+  "description": "Fetch nutrition info from Marley Spoon.",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --test --env-file=.env"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ViMaSter/marleyspoon-api.git"
+  },
+  "author": "Vincent Mahnke (vincent@mahn.ke)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ViMaSter/marleyspoon-api/issues"
+  },
+  "homepage": "https://github.com/ViMaSter/marleyspoon-api#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
