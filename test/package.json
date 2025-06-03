@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:ViMaSter/marleyspoon-api.git"
+    "url": "git+ssh://git@github.com/ViMaSter/marleyspoon-api.git"
   },
   "author": "Vincent Mahnke (vincent@mahn.ke)",
   "license": "GPL-3.0",
