@@ -14,4 +14,5 @@ Fetch nutrition information of recipes from Marley Spoon.
 2. Fetch the `remember_spree_user_token` cookie value
 3. Create a `.env` file in the root directory of the project with the following content:  
    `remember_spree_user_token="<your_cookie_value>"`
-4. Run `npm run test`
+4. Run `nvm i && nvm use && npm i`
+5. Run `npm run test`
