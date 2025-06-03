@@ -5,8 +5,7 @@
   "main": "client.js",
   "type": "module",
   "scripts": {
-    "test": "node --test --env-file=.env",
-    "prepublish": "cp ../README.md ../LICENSE ."
+    "test": "node --test --env-file=.env"
   },
   "repository": {
     "type": "git",
