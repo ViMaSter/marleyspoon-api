@@ -1,31 +1,56 @@
-name: Install and test
+name: Build and test
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      forceRelease:
+        description: 'Force release even if no changes were detected'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Use Node.js version from .nvmrc
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+
       - name: Install dependencies
         run: npm ci
+        working-directory: package
+
       - name: Run tests
-        run: node --test
+        run: npm ci && npm run test
         env:
           remember_spree_user_token: ${{ secrets.remember_spree_user_token }}
+        working-directory: test
+
       - name: Bump version number
         run: | 
           npx semantic-release
+        working-directory: package
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.inputs.forceRelease
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        working-directory: package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.inputs.forceRelease
