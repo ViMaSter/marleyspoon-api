@@ -33,7 +33,7 @@ jobs:
         working-directory: package
 
       - name: Run tests
-        run: npm ci && npm run test
+        run: npm ci && npm run citest
         env:
           remember_spree_user_token: ${{ secrets.remember_spree_user_token }}
         working-directory: test

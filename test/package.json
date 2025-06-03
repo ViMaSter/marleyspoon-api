@@ -5,7 +5,8 @@
   "main": "client.js",
   "type": "module",
   "scripts": {
-    "test": "node --test --env-file=.env"
+    "test": "node --test --env-file=.env",
+    "citest": "node --test"
   },
   "repository": {
     "type": "git",
