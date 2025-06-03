@@ -4,6 +4,9 @@
   "description": "Fetch nutrition info from Marley Spoon.",
   "main": "client.js",
   "type": "module",
+  "scripts": {
+    "prepack": "cp ../README.MD ../LICENSE ."
+  },
   "files": [
     "client.js"
   ],
