@@ -74,8 +74,7 @@ export class MarleySpoonClient {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.authorizationToken}`,
-                "X-REQUEST-TYPE": "GraphQL"
+                "Authorization": `Bearer ${this.authorizationToken}`
             },
             body: JSON.stringify({
                 query: `

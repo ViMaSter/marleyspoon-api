@@ -1,5 +1,5 @@
 import {test} from "node:test";
-import {MarleySpoonClient} from "./client.js";
+import {MarleySpoonClient} from "marleyspoon";
 import assert from "node:assert/strict";
 
 test("client allows fetching this weeks nutrition data", async () => {

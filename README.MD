@@ -12,7 +12,8 @@ Fetch nutrition information of recipes from Marley Spoon.
 
 1. Log into your Marley Spoon account and open the developer console in your browser
 2. Fetch the `remember_spree_user_token` cookie value
-3. Create a `.env` file in the root directory of the project with the following content:  
+3. Navigate into the `test` subdirectory
+4. Create a `.env` file with the following content:  
    `remember_spree_user_token="<your_cookie_value>"`
-4. Run `nvm i && nvm use && npm i`
-5. Run `npm run test`
+5. Run `nvm i && nvm use && npm i`
+6. Run `npm run test`
