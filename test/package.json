@@ -1,11 +1,12 @@
 {
-  "name": "marleyspoon-api",
+  "name": "marleyspoon-test",
   "version": "1.0.0",
-  "description": "Fetch nutrition info from Marley Spoon.",
-  "main": "main.js",
+  "description": "Integration test suite for marleyspoon",
+  "main": "client.js",
   "type": "module",
   "scripts": {
-    "test": "node --test --env-file=.env"
+    "test": "node --test --env-file=.env",
+    "prepublish": "cp ../README.md ../LICENSE ."
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,8 @@
   "homepage": "https://github.com/ViMaSter/marleyspoon-api#readme",
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "marleyspoon": "file:../package"
   }
 }
