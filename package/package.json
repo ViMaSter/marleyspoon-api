@@ -1,6 +1,6 @@
 {
   "name": "marleyspoon",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Fetch nutrition info from Marley Spoon.",
   "main": "client.js",
   "type": "module",
