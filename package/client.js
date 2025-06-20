@@ -36,11 +36,12 @@ export class MarleySpoonClient {
      * @async
      * @param {number} [count=20] The maximum number of orders to retrieve.
      * @param {string} [sortDirection="DESC"] The direction to sort orders: "ASC" (oldest order first) or "DESC" (most recent order first)
-     * @param {string} [scope=""] Optional scope for filtering orders, valid values: "AFTER_BILL_DEADLINE", "BEFORE_BILL_DEADLINE", "RECOMMENDED", "PROMOTED", "PAST", "CURRENT", "UPCOMING", "OUTSTANDING", "FAILED_PREAUTHORIZATIONS"
+     * @param {string} [scope=""] Optional scope for filtering orders, valid values: "AFTER_BILL_DEADLINE", "BEFORE_BILL_DEADLINE", "COMPLAINABLE", "RECOMMENDED", "PROMOTED", "PAST", "CURRENT", "UPCOMING", "OUTSTANDING", "FAILED_PREAUTHORIZATIONS"
+     * @param {boolean} [withNutritionalData=false] Whether to include nutritional data for each recipe in the order.
      * @returns {Promise<string[]>} A promise that resolves to an array of order numbers.
      * @throws {Error} If the user is not authenticated or if the fetch request fails.
      */
-    async getPastOrders(count = 20, sortDirection = "DESC", scope = "") {
+    async getPastOrders(count = 20, sortDirection = "DESC", scope = "", withNutritionalData = false) {
         if (!this.authorizationToken) {
             throw new Error("Call login() before calling any other methods");
         }
@@ -58,6 +59,7 @@ export class MarleySpoonClient {
                             orders(first: ${count}, sortBy: DELIVERY_DATE, ${scope ? "scope: " + scope + "," : ""} sortDirection: ${sortDirection}) {
                                 number
                                 deliveryDate
+                                ${withNutritionalData ? "contents { recipes { id title subtitle nutritionalInformation { name key perPortion per100g unit } } }" : ""}
                             }
                         }
                     }
@@ -74,7 +76,31 @@ export class MarleySpoonClient {
             throw new Error("No past orders found");
         }
 
-        return data.data.me.orders.map(order => order.number);
+        return data.data.me.orders.map(order => {
+            if (!order || !order.contents || !order.contents.recipes) { return order; }
+
+            order.contents.recipes = order.contents.recipes.map(recipe => {
+                // Helper to extract nutrition by key
+                const getNutrition = key => {
+                    const item = recipe.nutritionalInformation.find(n => n.key === key);
+                    return item
+                        ? { perPortion: item.perPortion, per100g: item.per100g }
+                        : { perPortion: null, per100g: null };
+                };
+                return {
+                    id: recipe.id,
+                    title: recipe.title,
+                    subtitle: recipe.subtitle,
+                    nutritionalInformation: {
+                        kcal: getNutrition("energy_kcal"),
+                        carbohydrates: getNutrition("total_carbs"),
+                        fat: getNutrition("total_fat"),
+                        protein: getNutrition("protein")
+                    }
+                };
+            });
+            return order;
+        });
     }
 
     async getThisWeeksOrderId() {
