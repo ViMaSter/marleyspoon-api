@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
     test(`client allows fetching ${count} past order ids`, async () => {
         const client = new MarleySpoonClient(process.env.remember_spree_user_token);
         await client.login();
-        const orderIds = (await client.getPastOrders(count)).map(order => order.number);
+        const orderIds = (await client.getOrders(count)).map(order => order.number);
         assert.ok(orderIds.length > 0);
         assert.ok(orderIds.length <= count);
         for (const orderId of orderIds) {
@@ -18,15 +18,15 @@ import assert from "node:assert/strict";
 test(`client allows fetching reverse order`, async () => {
     const client = new MarleySpoonClient(process.env.remember_spree_user_token);
     await client.login();
-    const orderIds = (await client.getPastOrders(1000)).map(order => order.number);
-    const reverseOrderIds = (await client.getPastOrders(1000, "ASC")).map(order => order.number);
+    const orderIds = (await client.getOrders(1000)).map(order => order.number);
+    const reverseOrderIds = (await client.getOrders(1000, "ASC")).map(order => order.number);
     assert.deepEqual(orderIds.reverse(), reverseOrderIds);
 });
 
 test("client allows fetching this weeks nutrition data", async () => {
     const client = new MarleySpoonClient(process.env.remember_spree_user_token);
     await client.login();
-    const nutritionData = (await client.getPastOrders(1, "DESC", "COMPLAINABLE", true))[0];
+    const nutritionData = (await client.getOrders(1, "DESC", "COMPLAINABLE", true))[0];
 
     for (const item of nutritionData.contents.recipes) {
         assert.ok(item.id > 0);
@@ -48,7 +48,7 @@ test("client allows fetching this weeks nutrition data", async () => {
 test("client allows fetching past 4 weeks nutrition data", async () => {
     const client = new MarleySpoonClient(process.env.remember_spree_user_token);
     await client.login();
-    const nutritionData = (await client.getPastOrders(4, "DESC", "COMPLAINABLE", true));
+    const nutritionData = (await client.getOrders(4, "DESC", "COMPLAINABLE", true));
 
     assert.ok(nutritionData.length > 0);
     for (const week of nutritionData) {

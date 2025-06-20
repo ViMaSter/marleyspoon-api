@@ -41,7 +41,7 @@ export class MarleySpoonClient {
      * @returns {Promise<string[]>} A promise that resolves to an array of order numbers.
      * @throws {Error} If the user is not authenticated or if the fetch request fails.
      */
-    async getPastOrders(count = 20, sortDirection = "DESC", scope = "", withNutritionalData = false) {
+    async getOrders(count = 20, sortDirection = "DESC", scope = "", withNutritionalData = false) {
         if (!this.authorizationToken) {
             throw new Error("Call login() before calling any other methods");
         }
@@ -104,7 +104,7 @@ export class MarleySpoonClient {
     }
 
     async getThisWeeksOrderId() {
-        return (await this.getPastOrders(1, "DESC", "COMPLAINABLE"))[0];
+        return (await this.getOrders(1, "DESC", "COMPLAINABLE"))[0];
     }
 
     async getNutritionData(orderId) {
