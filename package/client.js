@@ -29,7 +29,18 @@ export class MarleySpoonClient {
         this.authorizationToken = data.token;
     }
 
-    async getThisWeeksOrderId() {
+    
+    /**
+     * Retrieves a list of past order numbers for the authenticated user, sorted by delivery date.
+     *
+     * @async
+     * @param {number} [count=20] The maximum number of orders to retrieve.
+     * @param {string} [sortDirection="DESC"] The direction to sort orders: "ASC" (oldest order first) or "DESC" (most recent order first)
+     * @param {string} [scope=""] Optional scope for filtering orders, valid values: "AFTER_BILL_DEADLINE", "BEFORE_BILL_DEADLINE", "RECOMMENDED", "PROMOTED", "PAST", "CURRENT", "UPCOMING", "OUTSTANDING", "FAILED_PREAUTHORIZATIONS"
+     * @returns {Promise<string[]>} A promise that resolves to an array of order numbers.
+     * @throws {Error} If the user is not authenticated or if the fetch request fails.
+     */
+    async getPastOrders(count = 20, sortDirection = "DESC", scope = "") {
         if (!this.authorizationToken) {
             throw new Error("Call login() before calling any other methods");
         }
@@ -44,8 +55,9 @@ export class MarleySpoonClient {
                 query: `
                     query {
                         me {
-                            orders(scope: COMPLAINABLE, first: 1, sortBy: DELIVERY_DATE, sortDirection: DESC) {
+                            orders(first: ${count}, sortBy: DELIVERY_DATE, ${scope ? "scope: " + scope + "," : ""} sortDirection: ${sortDirection}) {
                                 number
+                                deliveryDate
                             }
                         }
                     }
@@ -55,14 +67,18 @@ export class MarleySpoonClient {
         });
 
         if (!response.ok) {
-            throw new Error("Failed to fetch this week's order: " + response.statusText);
+            throw new Error("Failed to fetch past orders: " + response.statusText);
         }
         const data = await response.json();
-        if (!data.data || !data.data.me || !data.data.me.orders || data.data.me.orders.length === 0) {
-            throw new Error("No orders found for this week");
+        if (!data.data || !data.data.me || !data.data.me.orders) {
+            throw new Error("No past orders found");
         }
 
-        return data.data.me.orders[0].number;
+        return data.data.me.orders.map(order => order.number);
+    }
+
+    async getThisWeeksOrderId() {
+        return (await this.getPastOrders(1, "DESC", "COMPLAINABLE"))[0];
     }
 
     async getNutritionData(orderId) {

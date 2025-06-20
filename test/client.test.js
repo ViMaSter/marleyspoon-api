@@ -2,6 +2,27 @@ import {test} from "node:test";
 import {MarleySpoonClient} from "marleyspoon";
 import assert from "node:assert/strict";
 
+[19, 20].forEach((count) => {
+    test(`client allows fetching ${count} past order ids`, async () => {
+        const client = new MarleySpoonClient(process.env.remember_spree_user_token);
+        await client.login();
+        const orderIds = await client.getPastOrders(count);
+        assert.ok(orderIds.length > 0);
+        assert.ok(orderIds.length <= count);
+        for (const orderId of orderIds) {
+            assert.ok(orderId.length > 0);
+        }
+    });
+});
+
+test(`client allows fetching reverse order`, async () => {
+    const client = new MarleySpoonClient(process.env.remember_spree_user_token);
+    await client.login();
+    const orderIds = await client.getPastOrders(1000);
+    const reverseOrderIds = await client.getPastOrders(1000, "ASC");
+    assert.deepEqual(orderIds.reverse(), reverseOrderIds);
+});
+
 test("client allows fetching this weeks nutrition data", async () => {
     const client = new MarleySpoonClient(process.env.remember_spree_user_token);
     await client.login();
